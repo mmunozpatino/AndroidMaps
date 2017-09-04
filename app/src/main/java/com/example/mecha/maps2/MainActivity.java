@@ -8,7 +8,7 @@ import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
-    Button BCurrentPlace;
+    Button BCurrentPlace,BSearchPlace;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -16,6 +16,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         BCurrentPlace = (Button) findViewById(R.id.BCurrentPlace);
         BCurrentPlace.setOnClickListener(this);
+
+        BSearchPlace = (Button) findViewById(R.id.BSearchPlace);
+        BSearchPlace.setOnClickListener(this);
     }
 
     @Override
@@ -24,6 +27,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.BCurrentPlace:
                 Intent current = new Intent(this, MapsActivity1.class);
                 startActivity(current);
+                break;
+
+            case R.id.BSearchPlace:
+                Intent search = new Intent(this, MapsSearchActivity.class);
+                startActivity(search);
                 break;
         }
     }

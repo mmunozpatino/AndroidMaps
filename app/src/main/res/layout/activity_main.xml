@@ -5,12 +5,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.mecha.maps2.MainActivity">
+    tools:context="com.example.mecha.maps2.MainActivity"
+    android:orientation="vertical">
 
     <Button
         android:id="@+id/BCurrentPlace"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Current Location"/>
+
+    <Button
+        android:id="@+id/BSearchPlace"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Search Place"/>
 
 </LinearLayout>
