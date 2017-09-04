@@ -18,6 +18,8 @@
         android:id="@+id/BSearchPlace"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Search Place"/>
+        android:text="Search Place"
+        android:layout_below="@+id/BCurrentPlace"
+        android:layout_alignParentStart="true"/>
 
 </LinearLayout>

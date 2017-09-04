@@ -2,6 +2,8 @@ package com.example.mecha.maps2;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -10,6 +12,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -26,6 +30,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.IOException;
+import java.util.List;
+
 public class MapsSearchActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
@@ -41,7 +48,7 @@ public class MapsSearchActivity extends FragmentActivity implements OnMapReadyCa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps1);
+        setContentView(R.layout.activity_maps_search);
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
             checkLocationPermission();
@@ -92,9 +99,6 @@ public class MapsSearchActivity extends FragmentActivity implements OnMapReadyCa
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
                 PackageManager.PERMISSION_GRANTED){
             buildGoogleApiClient();
-            //Esta linea activa el boton para buscar la ubicación actual, no activa la ubicación
-            // del telefono
-            mMap.setMyLocationEnabled(true);
         }
 
 
@@ -112,30 +116,7 @@ public class MapsSearchActivity extends FragmentActivity implements OnMapReadyCa
 
     @Override
     public void onLocationChanged(Location location) {
-        lastLocation = location;
 
-        //si ya habia un marcador es necesario borrarlo antes de poner el actual
-        if(currentLocationMarker != null){
-            currentLocationMarker.remove();
-        }
-        LatLng latlng = new LatLng(location.getLatitude(),location.getLongitude());
-
-        //ahora para setear propiedades a ese marcador (titulo, color)
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latlng);
-        markerOptions.title("CurrentLocation");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-
-        //inserto las markerOptions
-        currentLocationMarker = mMap.addMarker(markerOptions);
-
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latlng));
-        mMap.animateCamera(CameraUpdateFactory.zoomBy(10));
-
-        //debemos detener después de actualizar
-        if(client != null){
-            LocationServices.FusedLocationApi.removeLocationUpdates(client, this);
-        }
     }
 
     @Override
@@ -182,5 +163,40 @@ public class MapsSearchActivity extends FragmentActivity implements OnMapReadyCa
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+    }
+
+    public void onClick(View v){
+        if(v.getId() == R.id.B_search){
+            EditText tf_location = (EditText) findViewById(R.id.TF_location);
+            String location = tf_location.getText().toString();
+            List<Address> addressList = null;
+            MarkerOptions mo = new MarkerOptions();
+
+            if( ! location.equals("")){
+                //consultar documentacion de lo siguiente en android.developers
+                Geocoder geocoder = new Geocoder(this);
+                try {
+                    addressList = geocoder.getFromLocationName(location, 1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                //vamos a poner una marca en todos los lugares encontrados
+
+                for(int i=0 ; i < addressList.size(); i++){
+                    Address myAddress = addressList.get(i);
+                    LatLng latLng = new LatLng(myAddress.getLatitude(),myAddress.getLongitude());
+                    mo.position(latLng);
+                    mo.title("Search Result");
+                    mMap.addMarker(mo);
+                    //movemos camara
+
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,17));
+
+
+
+                }
+
+            }
+        }
     }
 }
