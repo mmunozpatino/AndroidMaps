@@ -50,39 +50,12 @@ public class MapsSearchActivity extends FragmentActivity implements OnMapReadyCa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps_search);
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            checkLocationPermission();
-        }
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
-        switch (requestCode){
-            case REQUEST_LOCATION_CODE:
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    //permiso concevido
-                    if(ContextCompat.checkSelfPermission(this, Manifest.permission
-                            .ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                        if(client == null){
-                            buildGoogleApiClient();
-                        }
-                        mMap.setMyLocationEnabled(true);
-                    }
-                }
-                //permiso denegado
-                else {
-                    Toast.makeText(this, "Permiso denegado", Toast.LENGTH_LONG).show();
-                }
-                break;
-        }
-    }
-
-
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -100,9 +73,6 @@ public class MapsSearchActivity extends FragmentActivity implements OnMapReadyCa
                 PackageManager.PERMISSION_GRANTED){
             buildGoogleApiClient();
         }
-
-
-
     }
 
     protected synchronized void buildGoogleApiClient(){
@@ -116,9 +86,7 @@ public class MapsSearchActivity extends FragmentActivity implements OnMapReadyCa
 
     @Override
     public void onLocationChanged(Location location) {
-
     }
-
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         locationRequest = new LocationRequest();
@@ -134,25 +102,6 @@ public class MapsSearchActivity extends FragmentActivity implements OnMapReadyCa
         }
 
     }
-
-    public boolean checkLocationPermission(){
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED){
-            //si no tenemos el permiso vamos a pedirlo
-            //MIRAR
-            if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)){
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission
-                        .ACCESS_FINE_LOCATION}, REQUEST_LOCATION_CODE);
-            }else{
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission
-                        .ACCESS_FINE_LOCATION}, REQUEST_LOCATION_CODE);
-            }
-            return false; //si selecciona no preguntar de nuevo
-        }else{
-            return false;
-        }
-    }
-
 
 
     @Override
@@ -191,9 +140,6 @@ public class MapsSearchActivity extends FragmentActivity implements OnMapReadyCa
                     //movemos camara
 
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,17));
-
-
-
                 }
 
             }

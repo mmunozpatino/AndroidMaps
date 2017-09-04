@@ -9,8 +9,10 @@ import com.google.android.gms.location.LocationListener;
 
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,6 +20,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
+import android.view.Gravity;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -50,13 +54,22 @@ public class MapsActivity1 extends FragmentActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps1);
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            checkLocationPermission();
-        }
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        boolean msj = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        if(!msj){
+            Toast toast = Toast.makeText(this,"Por favor active la ubicacion", Toast
+                    .LENGTH_LONG);
+            toast.setGravity(Gravity.CENTER_VERTICAL,0,0);
+            toast.show();
+
+        }
+        Log.i("hola", String.valueOf(msj));
     }
 
     @Override
@@ -136,8 +149,7 @@ public class MapsActivity1 extends FragmentActivity implements OnMapReadyCallbac
         //inserto las markerOptions
         currentLocationMarker = mMap.addMarker(markerOptions);
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latlng));
-        mMap.animateCamera(CameraUpdateFactory.zoomBy(10));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 17));
 
         //debemos detener después de actualizar
         if(client != null){
@@ -159,24 +171,6 @@ public class MapsActivity1 extends FragmentActivity implements OnMapReadyCallbac
             LocationServices.FusedLocationApi.requestLocationUpdates(client,locationRequest,this);
         }
 
-    }
-
-    public boolean checkLocationPermission(){
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED){
-            //si no tenemos el permiso vamos a pedirlo
-            //MIRAR
-            if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)){
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission
-                        .ACCESS_FINE_LOCATION}, REQUEST_LOCATION_CODE);
-            }else{
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission
-                        .ACCESS_FINE_LOCATION}, REQUEST_LOCATION_CODE);
-            }
-            return false; //si selecciona no preguntar de nuevo
-        }else{
-            return false;
-        }
     }
 
 
