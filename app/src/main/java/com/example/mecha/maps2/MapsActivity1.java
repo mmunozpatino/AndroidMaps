@@ -99,6 +99,8 @@ public class MapsActivity1 extends FragmentActivity implements OnMapReadyCallbac
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
                 PackageManager.PERMISSION_GRANTED){
             buildGoogleApiClient();
+            //Esta linea activa el boton para buscar la ubicación actual, no activa la ubicación
+            // del telefono
             mMap.setMyLocationEnabled(true);
         }
 
