@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
-    Button BCurrentPlace,BSearchPlace;
+    Button BCurrentPlace,BSearchPlace,BNearbyPlaces;
     public static final int REQUEST_LOCATION_CODE = 99;
 
     @Override
@@ -32,6 +32,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         BSearchPlace = (Button) findViewById(R.id.BSearchPlace);
         BSearchPlace.setOnClickListener(this);
+
+        BNearbyPlaces = (Button) findViewById(R.id.BNearbyPlaces);
+        BNearbyPlaces.setOnClickListener(this);
+
     }
 
     @Override
@@ -64,6 +68,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.BSearchPlace:
                 Intent search = new Intent(this, MapsSearchActivity.class);
                 startActivity(search);
+                break;
+            case R.id.BNearbyPlaces:
+                Intent nearby = new Intent(this, MapsNearbyPlacesActivity.class);
+                startActivity(nearby);
                 break;
         }
     }

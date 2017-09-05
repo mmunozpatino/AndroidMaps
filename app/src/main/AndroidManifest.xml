@@ -53,6 +53,10 @@
             android:name=".MapsSearchActivity"
             android:label="@string/title_activity_maps_search">
         </activity>
+        <activity
+            android:name=".MapsNearbyPlacesActivity"
+            android:label="@string/title_activity_maps_nearby_places">
+        </activity>
     </application>
 
 </manifest>

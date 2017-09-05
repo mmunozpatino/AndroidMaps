@@ -22,4 +22,10 @@
         android:layout_below="@+id/BCurrentPlace"
         android:layout_alignParentStart="true"/>
 
+    <Button
+        android:id="@+id/BNearbyPlaces"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Nearby Places"/>
+
 </LinearLayout>

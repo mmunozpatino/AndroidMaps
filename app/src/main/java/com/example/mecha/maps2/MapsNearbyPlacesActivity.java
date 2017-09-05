@@ -1,31 +1,25 @@
 package com.example.mecha.maps2;
 
-/*Esta es la importación por defecto pero no es la que sirve
-
-import android.location.LocationListener;
-La que sigue es la útil, va a dar error pero para ello debemos modificar el grandle*/
-
-import com.google.android.gms.location.LocationListener;
-
-
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -37,7 +31,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsActivity1 extends FragmentActivity implements OnMapReadyCallback,
+import java.io.IOException;
+import java.util.List;
+
+public class MapsNearbyPlacesActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
@@ -52,13 +49,12 @@ public class MapsActivity1 extends FragmentActivity implements OnMapReadyCallbac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps1);
-
-
+        setContentView(R.layout.activity_maps_nearby_places);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
 
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         boolean msj = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -70,6 +66,7 @@ public class MapsActivity1 extends FragmentActivity implements OnMapReadyCallbac
 
         }
     }
+
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -157,5 +154,36 @@ public class MapsActivity1 extends FragmentActivity implements OnMapReadyCallbac
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+    }
+    public void onClick(View v){
+        if(v.getId() == R.id.B_search){
+            EditText tf_location = (EditText) findViewById(R.id.TF_location);
+            String location = tf_location.getText().toString();
+            List<Address> addressList = null;
+            MarkerOptions mo = new MarkerOptions();
+
+            if( ! location.equals("")){
+                //consultar documentacion de lo siguiente en android.developers
+                Geocoder geocoder = new Geocoder(this);
+                try {
+                    addressList = geocoder.getFromLocationName(location, 1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                //vamos a poner una marca en todos los lugares encontrados
+
+                for(int i=0 ; i < addressList.size(); i++){
+                    Address myAddress = addressList.get(i);
+                    LatLng latLng = new LatLng(myAddress.getLatitude(),myAddress.getLongitude());
+                    mo.position(latLng);
+                    mo.title("Search Result");
+                    mMap.addMarker(mo);
+                    //movemos camara
+
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,17));
+                }
+
+            }
+        }
     }
 }
